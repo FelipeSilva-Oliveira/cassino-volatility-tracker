@@ -134,6 +134,9 @@ def renderizar_painel():
 </div>
 """, unsafe_allow_html=True)
 
+ # ==========================================
+    # 5. PÁGINA 2: ANÁLISE ESTATÍSTICA (GRÁFICOS)
+    # ==========================================
     elif pagina == "📊 Análise Estatística":
         st.markdown("### Distribuição de Frequência e Dispersão")
         st.divider()
@@ -151,14 +154,24 @@ def renderizar_painel():
             st.selectbox("🔎 Buscar jogo específico:", jogos_disponiveis, key="jogo_selecionado")
             
             st.markdown("<p style='color: #888; font-size: 0.9rem; margin-top: 10px;'>Acesso Rápido (Jogos com mais ciclos registrados):</p>", unsafe_allow_html=True)
-            top_jogos = ["Todos os Jogos"] + list(df['nome_jogo'].value_counts().index[:11])
+            
+            # --- CORREÇÃO DOS BOTÕES (Removendo o HTML e adicionando a contagem limpa) ---
+            contagem_jogos = df['nome_jogo'].value_counts()
+            top_jogos = ["Todos os Jogos"] + list(contagem_jogos.index[:11])
             
             cols = st.columns(6) 
             for i, jogo in enumerate(top_jogos):
                 is_ativo = (st.session_state.jogo_selecionado == jogo)
+                
+                # Formata o nome do botão para mostrar a quantidade de ciclos ex: "Bizarre (29)"
+                if jogo == "Todos os Jogos":
+                    label_botao = "Todos os Jogos"
+                else:
+                    label_botao = f"{jogo} ({contagem_jogos[jogo]})"
+                
                 with cols[i % 6]:
                     st.button(
-                        jogo,
+                        label_botao,
                         type="primary" if is_ativo else "secondary",
                         on_click=selecionar_pelo_card,
                         args=(jogo,),
@@ -179,32 +192,42 @@ def renderizar_painel():
                 st.info("Ainda não há dados históricos registrados para este jogo.")
 
             st.markdown("<br>", unsafe_allow_html=True)
+            
             if not df_plot.empty:
-                st.subheader("Frequência: Faixas de Tempo no 'Gelo'")
-                fig_hist = px.histogram(
-                    df_plot, 
-                    x="minutos_para_recuperar", 
-                    nbins=20, 
-                    color="nome_jogo" if jogo_alvo == "Todos os Jogos" else None,
-                    color_discrete_sequence=px.colors.sequential.Plasma,
-                    labels={"minutos_para_recuperar": "Minutos em estado Cold"},
-                    template="plotly_dark"
-                )
-                fig_hist.update_layout(yaxis_title="Quantidade de Explosões (Vezes)")
-                st.plotly_chart(fig_hist, use_container_width=True)
+                # --- GRÁFICOS LADO A LADO ---
+                # Cria duas colunas idênticas para dividir a tela ao meio
+                col_esq, col_dir = st.columns(2)
 
-                st.subheader("Linha do Tempo: Picos Registrados")
-                fig_linha = px.scatter(
-                    df_plot, 
-                    x="data_virou_hot", 
-                    y="rtp_quando_quente", 
-                    color="nome_jogo" if jogo_alvo == "Todos os Jogos" else None,
-                    size="minutos_para_recuperar",
-                    hover_data=["minutos_para_recuperar"],
-                    labels={"data_virou_hot": "Data da Ocorrência", "rtp_quando_quente": "RTP de Explosão (%)"},
-                    template="plotly_dark"
-                )
-                st.plotly_chart(fig_linha, use_container_width=True)
+                with col_esq:
+                    st.markdown("<h4 style='color: white; font-size: 1.1rem;'>Frequência: Faixas de Tempo no 'Gelo'</h4>", unsafe_allow_html=True)
+                    fig_hist = px.histogram(
+                        df_plot, 
+                        x="minutos_para_recuperar", 
+                        nbins=20, 
+                        color="nome_jogo" if jogo_alvo == "Todos os Jogos" else None,
+                        color_discrete_sequence=px.colors.sequential.Plasma,
+                        labels={"minutos_para_recuperar": "Minutos em estado Cold"},
+                        template="plotly_dark"
+                    )
+                    # Controla a altura máxima (height) e as margens para o gráfico ficar mais compacto
+                    fig_hist.update_layout(yaxis_title="Quantidade de Explosões", height=400, margin=dict(t=20, b=20, l=0, r=0))
+                    st.plotly_chart(fig_hist, use_container_width=True)
+
+                with col_dir:
+                    st.markdown("<h4 style='color: white; font-size: 1.1rem;'>Linha do Tempo: Picos Registrados</h4>", unsafe_allow_html=True)
+                    fig_linha = px.scatter(
+                        df_plot, 
+                        x="data_virou_hot", 
+                        y="rtp_quando_quente", 
+                        color="nome_jogo" if jogo_alvo == "Todos os Jogos" else None,
+                        size="minutos_para_recuperar",
+                        hover_data=["minutos_para_recuperar"],
+                        labels={"data_virou_hot": "Data da Ocorrência", "rtp_quando_quente": "RTP de Explosão (%)"},
+                        template="plotly_dark"
+                    )
+                    # Controla a altura máxima (height) para alinhar com o gráfico do lado esquerdo
+                    fig_linha.update_layout(height=400, margin=dict(t=20, b=20, l=0, r=0))
+                    st.plotly_chart(fig_linha, use_container_width=True)
 
 # ==========================================
 # 5. INICIALIZAÇÃO DA INTERFACE

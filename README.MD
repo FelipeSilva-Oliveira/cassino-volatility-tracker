@@ -23,6 +23,7 @@ O projeto foi estruturado seguindo as melhores práticas de Engenharia de Dados,
 ### Pré-requisitos
 * Python 3.8+
 * Servidor MySQL/MariaDB rodando localmente.
+<<<<<<< HEAD
 
 
 ## 3. Demonstração Visual (Interface UI/UX)
@@ -43,3 +44,5 @@ Uma aba dedicada a investigações profundas de jogos isolados, utilizando memó
 * **Cruzamento Visual:** Do lado esquerdo, o **Histograma** exibe a distribuição de frequência de tempo no "Gelo", provando qual é a faixa de tempo mais comum para aquele jogo estourar. Do lado direito, o **Gráfico de Dispersão** mapeia os picos na linha do tempo (o tamanho da bolha indica o tempo que o jogo passou acumulando antes da explosão).
 
 ![Dashboard estatístico com gráficos lado a lado e filtros rápidos](assets/analise_estatistica.png)
+=======
+>>>>>>> 67d676816d839e4e1ee4add414bf8859e0e17a18

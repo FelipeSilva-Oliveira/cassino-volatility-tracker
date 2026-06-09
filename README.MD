@@ -23,9 +23,3 @@ O projeto foi estruturado seguindo as melhores práticas de Engenharia de Dados,
 ### Pré-requisitos
 * Python 3.8+
 * Servidor MySQL/MariaDB rodando localmente.
-
-### Instalação
-1. Clone este repositório:
-   ```bash
-   git clone [https://github.com/FelipeSilva-Oliveira/NOME_DO_SEU_REPOSITORIO.git](https://github.com/FelipeSilva-Oliveira/NOME_DO_SEU_REPOSITORIO.git)
-   cd NOME_DO_SEU_REPOSITORIO
